@@ -1,9 +1,13 @@
 package br.com.postech.techchallange_customer.domain.exception;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class DomainExceptionTest {
 
@@ -12,7 +16,7 @@ class DomainExceptionTest {
 	void deveCriarDomainExceptionComMensagem() {
 		String mensagem = "Erro de domínio";
 		DomainException exception = new DomainException(mensagem);
-		
+
 		assertNotNull(exception);
 		assertEquals(mensagem, exception.getMessage());
 		assertNull(exception.getCause());
@@ -24,7 +28,7 @@ class DomainExceptionTest {
 		String mensagem = "Erro de domínio";
 		Throwable causa = new IllegalArgumentException("Argumento inválido");
 		DomainException exception = new DomainException(mensagem, causa);
-		
+
 		assertNotNull(exception);
 		assertEquals(mensagem, exception.getMessage());
 		assertEquals(causa, exception.getCause());
@@ -35,7 +39,7 @@ class DomainExceptionTest {
 	@DisplayName("Deve ser uma RuntimeException")
 	void deveSerUmaRuntimeException() {
 		DomainException exception = new DomainException("Erro");
-		
+
 		assertTrue(exception instanceof RuntimeException);
 	}
 
@@ -45,7 +49,7 @@ class DomainExceptionTest {
 		String mensagemOriginal = "Mensagem de erro específica";
 		Throwable causa = new NullPointerException("NPE");
 		DomainException exception = new DomainException(mensagemOriginal, causa);
-		
+
 		assertEquals(mensagemOriginal, exception.getMessage());
 		assertNotEquals(causa.getMessage(), exception.getMessage());
 	}
@@ -54,7 +58,7 @@ class DomainExceptionTest {
 	@DisplayName("Deve permitir mensagem nula")
 	void devePermitirMensagemNula() {
 		DomainException exception = new DomainException(null);
-		
+
 		assertNotNull(exception);
 		assertNull(exception.getMessage());
 	}
@@ -63,7 +67,7 @@ class DomainExceptionTest {
 	@DisplayName("Deve permitir mensagem vazia")
 	void devePermitirMensagemVazia() {
 		DomainException exception = new DomainException("");
-		
+
 		assertNotNull(exception);
 		assertEquals("", exception.getMessage());
 	}
@@ -72,7 +76,7 @@ class DomainExceptionTest {
 	@DisplayName("Deve permitir causa nula")
 	void devePermitirCausaNula() {
 		DomainException exception = new DomainException("Erro", null);
-		
+
 		assertNotNull(exception);
 		assertEquals("Erro", exception.getMessage());
 		assertNull(exception.getCause());
@@ -92,7 +96,7 @@ class DomainExceptionTest {
 		DomainException exception = assertThrows(DomainException.class, () -> {
 			throw new DomainException("Erro específico");
 		});
-		
+
 		assertEquals("Erro específico", exception.getMessage());
 	}
 
@@ -100,7 +104,7 @@ class DomainExceptionTest {
 	@DisplayName("Deve preservar stack trace")
 	void devePreservarStackTrace() {
 		DomainException exception = new DomainException("Erro");
-		
+
 		assertNotNull(exception.getStackTrace());
 		assertTrue(exception.getStackTrace().length > 0);
 	}
@@ -111,7 +115,7 @@ class DomainExceptionTest {
 		Exception causaRaiz = new IllegalStateException("Estado inválido");
 		RuntimeException causaIntermediaria = new RuntimeException("Erro intermediário", causaRaiz);
 		DomainException exception = new DomainException("Erro de domínio", causaIntermediaria);
-		
+
 		assertEquals(causaIntermediaria, exception.getCause());
 		assertEquals(causaRaiz, exception.getCause().getCause());
 	}

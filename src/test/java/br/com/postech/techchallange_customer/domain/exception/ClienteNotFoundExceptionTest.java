@@ -1,9 +1,12 @@
 package br.com.postech.techchallange_customer.domain.exception;
 
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.DisplayName;
-
-import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.Test;
 
 class ClienteNotFoundExceptionTest {
 
@@ -12,7 +15,7 @@ class ClienteNotFoundExceptionTest {
 	void deveCriarClienteNotFoundExceptionComClienteId() {
 		String clienteId = "cliente-123";
 		ClienteNotFoundException exception = new ClienteNotFoundException(clienteId);
-		
+
 		assertNotNull(exception);
 		assertEquals("Cliente não encontrado com ID: cliente-123", exception.getMessage());
 	}
@@ -23,7 +26,7 @@ class ClienteNotFoundExceptionTest {
 		String campo = "CPF";
 		String valor = "12345678901";
 		ClienteNotFoundException exception = new ClienteNotFoundException(campo, valor);
-		
+
 		assertNotNull(exception);
 		assertEquals("Cliente não encontrado com CPF: 12345678901", exception.getMessage());
 	}
@@ -32,7 +35,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem corretamente com clienteId")
 	void deveFormatarMensagemCorretamenteComClienteId() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("abc-123-xyz");
-		
+
 		assertEquals("Cliente não encontrado com ID: abc-123-xyz", exception.getMessage());
 	}
 
@@ -40,7 +43,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem corretamente para CPF")
 	void deveFormatarMensagemCorretamenteParaCpf() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("CPF", "12345678901");
-		
+
 		assertEquals("Cliente não encontrado com CPF: 12345678901", exception.getMessage());
 	}
 
@@ -48,7 +51,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem corretamente para email")
 	void deveFormatarMensagemCorretamenteParaEmail() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("email", "joao@email.com");
-		
+
 		assertEquals("Cliente não encontrado com email: joao@email.com", exception.getMessage());
 	}
 
@@ -56,7 +59,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem corretamente para telefone")
 	void deveFormatarMensagemCorretamenteParaTelefone() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("telefone", "11987654321");
-		
+
 		assertEquals("Cliente não encontrado com telefone: 11987654321", exception.getMessage());
 	}
 
@@ -64,7 +67,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve ser uma DomainException")
 	void deveSerUmaDomainException() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("cliente-123");
-		
+
 		assertTrue(exception instanceof DomainException);
 	}
 
@@ -72,7 +75,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve ser uma RuntimeException")
 	void deveSerUmaRuntimeException() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("cliente-123");
-		
+
 		assertTrue(exception instanceof RuntimeException);
 	}
 
@@ -98,7 +101,7 @@ class ClienteNotFoundExceptionTest {
 		ClienteNotFoundException exception = assertThrows(ClienteNotFoundException.class, () -> {
 			throw new ClienteNotFoundException("cliente-789");
 		});
-		
+
 		assertEquals("Cliente não encontrado com ID: cliente-789", exception.getMessage());
 	}
 
@@ -108,7 +111,7 @@ class ClienteNotFoundExceptionTest {
 		ClienteNotFoundException exception = assertThrows(ClienteNotFoundException.class, () -> {
 			throw new ClienteNotFoundException("email", "maria@email.com");
 		});
-		
+
 		assertEquals("Cliente não encontrado com email: maria@email.com", exception.getMessage());
 	}
 
@@ -116,7 +119,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve preservar stack trace")
 	void devePreservarStackTrace() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("cliente-123");
-		
+
 		assertNotNull(exception.getStackTrace());
 		assertTrue(exception.getStackTrace().length > 0);
 	}
@@ -127,7 +130,7 @@ class ClienteNotFoundExceptionTest {
 		DomainException exception = assertThrows(DomainException.class, () -> {
 			throw new ClienteNotFoundException("cliente-123");
 		});
-		
+
 		assertTrue(exception instanceof ClienteNotFoundException);
 	}
 
@@ -137,7 +140,7 @@ class ClienteNotFoundExceptionTest {
 		RuntimeException exception = assertThrows(RuntimeException.class, () -> {
 			throw new ClienteNotFoundException("cliente-123");
 		});
-		
+
 		assertTrue(exception instanceof ClienteNotFoundException);
 	}
 
@@ -146,7 +149,7 @@ class ClienteNotFoundExceptionTest {
 	void deveAceitarUuidComoClienteId() {
 		String uuid = "550e8400-e29b-41d4-a716-446655440000";
 		ClienteNotFoundException exception = new ClienteNotFoundException(uuid);
-		
+
 		assertEquals("Cliente não encontrado com ID: 550e8400-e29b-41d4-a716-446655440000", exception.getMessage());
 	}
 
@@ -154,7 +157,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve aceitar campo com letras maiúsculas")
 	void deveAceitarCampoComLetrasMaiusculas() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("CPF", "12345678901");
-		
+
 		assertTrue(exception.getMessage().contains("CPF"));
 	}
 
@@ -162,7 +165,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve aceitar campo com letras minúsculas")
 	void deveAceitarCampoComLetrasMinusculas() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("cpf", "12345678901");
-		
+
 		assertTrue(exception.getMessage().contains("cpf"));
 	}
 
@@ -170,7 +173,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem com valor contendo caracteres especiais")
 	void deveFormatarMensagemComValorContendoCaracteresEspeciais() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("email", "usuario+tag@dominio.com.br");
-		
+
 		assertEquals("Cliente não encontrado com email: usuario+tag@dominio.com.br", exception.getMessage());
 	}
 
@@ -178,7 +181,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem com CPF formatado")
 	void deveFormatarMensagemComCpfFormatado() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("CPF", "123.456.789-01");
-		
+
 		assertEquals("Cliente não encontrado com CPF: 123.456.789-01", exception.getMessage());
 	}
 
@@ -186,7 +189,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve aceitar clienteId vazio")
 	void deveAceitarClienteIdVazio() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("");
-		
+
 		assertEquals("Cliente não encontrado com ID: ", exception.getMessage());
 	}
 
@@ -194,7 +197,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve aceitar campo vazio")
 	void deveAceitarCampoVazio() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("", "valor");
-		
+
 		assertEquals("Cliente não encontrado com : valor", exception.getMessage());
 	}
 
@@ -202,7 +205,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve aceitar valor vazio")
 	void deveAceitarValorVazio() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("campo", "");
-		
+
 		assertEquals("Cliente não encontrado com campo: ", exception.getMessage());
 	}
 
@@ -210,7 +213,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem com espaços no campo")
 	void deveFormatarMensagemComEspacosNoCampo() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("número do documento", "12345");
-		
+
 		assertEquals("Cliente não encontrado com número do documento: 12345", exception.getMessage());
 	}
 
@@ -218,7 +221,7 @@ class ClienteNotFoundExceptionTest {
 	@DisplayName("Deve formatar mensagem com espaços no valor")
 	void deveFormatarMensagemComEspacosNoValor() {
 		ClienteNotFoundException exception = new ClienteNotFoundException("nome", "João Silva Santos");
-		
+
 		assertEquals("Cliente não encontrado com nome: João Silva Santos", exception.getMessage());
 	}
 
@@ -227,7 +230,7 @@ class ClienteNotFoundExceptionTest {
 	void deveManterFormatoDaMensagemConsistenteEntreConstrutores() {
 		ClienteNotFoundException exception1 = new ClienteNotFoundException("cliente-123");
 		ClienteNotFoundException exception2 = new ClienteNotFoundException("ID", "cliente-123");
-		
+
 		assertTrue(exception1.getMessage().contains("cliente-123"));
 		assertTrue(exception2.getMessage().contains("cliente-123"));
 		assertTrue(exception1.getMessage().contains("ID"));
@@ -239,7 +242,7 @@ class ClienteNotFoundExceptionTest {
 	void deveDiferenciarMensagensDosDoisConstrutores() {
 		ClienteNotFoundException exception1 = new ClienteNotFoundException("cliente-123");
 		ClienteNotFoundException exception2 = new ClienteNotFoundException("CPF", "12345678901");
-		
+
 		assertTrue(exception1.getMessage().contains("com ID:"));
 		assertTrue(exception2.getMessage().contains("com CPF:"));
 		assertNotEquals(exception1.getMessage(), exception2.getMessage());
