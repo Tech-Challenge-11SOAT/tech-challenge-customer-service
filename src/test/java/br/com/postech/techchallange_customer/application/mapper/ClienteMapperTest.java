@@ -619,4 +619,11 @@ class ClienteMapperTest {
 		assertNotNull(metadata);
 		assertNull(metadata.getTags());
 	}
+
+	@Test
+	@DisplayName("Deve permitir instanciar ClienteMapper")
+	void devePermitirInstanciarClienteMapper() {
+		ClienteMapper mapper = new ClienteMapper();
+		assertNotNull(mapper);
+	}
 }
