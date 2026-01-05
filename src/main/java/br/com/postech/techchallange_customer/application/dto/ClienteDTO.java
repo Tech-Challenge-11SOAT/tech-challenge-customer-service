@@ -28,7 +28,6 @@ public class ClienteDTO {
 	@Pattern(regexp = "\\d{11}", message = "O CPF deve conter exatamente 11 dígitos numéricos")
 	private String cpfCliente;
 
-	@Pattern(regexp = "\\d{10,11}", message = "O telefone deve conter 10 ou 11 dígitos")
 	private String telefone;
 
 	@Valid
