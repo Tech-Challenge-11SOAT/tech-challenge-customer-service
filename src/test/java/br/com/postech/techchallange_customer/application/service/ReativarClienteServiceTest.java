@@ -1,22 +1,32 @@
 package br.com.postech.techchallange_customer.application.service;
 
-import br.com.postech.techchallange_customer.domain.entity.Cliente;
-import br.com.postech.techchallange_customer.domain.entity.Metadata;
-import br.com.postech.techchallange_customer.domain.exception.ClienteNotFoundException;
-import br.com.postech.techchallange_customer.domain.port.out.ClienteRepositoryPort;
+import java.time.LocalDateTime;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDateTime;
-import java.util.Optional;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import br.com.postech.techchallange_customer.domain.entity.Cliente;
+import br.com.postech.techchallange_customer.domain.entity.Metadata;
+import br.com.postech.techchallange_customer.domain.exception.ClienteNotFoundException;
+import br.com.postech.techchallange_customer.domain.port.out.ClienteRepositoryPort;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ReativarClienteService Tests")
