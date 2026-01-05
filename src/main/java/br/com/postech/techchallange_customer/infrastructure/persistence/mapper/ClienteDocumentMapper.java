@@ -10,6 +10,10 @@ import br.com.postech.techchallange_customer.infrastructure.persistence.document
  */
 public class ClienteDocumentMapper {
 
+	private ClienteDocumentMapper() {
+		// Construtor privado para evitar instanciação
+	}
+
 	/**
 	 * Converte de Domain Entity para Document
 	 */

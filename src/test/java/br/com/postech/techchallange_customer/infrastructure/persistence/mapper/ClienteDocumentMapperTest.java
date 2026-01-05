@@ -1,6 +1,7 @@
 package br.com.postech.techchallange_customer.infrastructure.persistence.mapper;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 
@@ -830,5 +831,152 @@ class ClienteDocumentMapperTest {
 		assertNull(cliente2.getMetadata());
 		assertEquals("Doc 1", cliente1.getNomeCliente());
 		assertEquals("Doc 2", cliente2.getNomeCliente());
+	}
+
+	@Test
+	@DisplayName("Deve cobrir branches não executados dos métodos privados - cenário completo 1")
+	void deveCobrirBranchesMetodosPrivadosCenario1() {
+		// Testa todos os branches de toEnderecoDocument com objeto completo
+		Endereco endereco = new Endereco();
+		endereco.setRua("Av Principal");
+		endereco.setNumero("999");
+		endereco.setComplemento("Sala 10");
+		endereco.setBairro("Bairro Teste");
+		endereco.setCidade("Cidade Teste");
+		endereco.setEstado("MG");
+		endereco.setCep("30000000");
+
+		Cliente clienteCompleto = new Cliente();
+		clienteCompleto.setId("test-1");
+		clienteCompleto.setCpfCliente("11111111111");
+		clienteCompleto.setNomeCliente("Teste Completo");
+		clienteCompleto.setEmailCliente("teste@teste.com");
+		clienteCompleto.setEndereco(endereco);
+
+		ClienteDocument doc = ClienteDocumentMapper.toDocument(clienteCompleto);
+
+		assertNotNull(doc);
+		assertNotNull(doc.getEndereco());
+		assertEquals("Av Principal", doc.getEndereco().getRua());
+		assertEquals("30000000", doc.getEndereco().getCep()); // CEP não é formatado no mapper
+	}
+
+	@Test
+	@DisplayName("Deve cobrir branches não executados dos métodos privados - cenário completo 2")
+	void deveCobrirBranchesMetodosPrivadosCenario2() {
+		// Testa todos os branches de toMetadataDocument com objeto completo
+		Metadata metadata = new Metadata();
+		metadata.setOrigem("API");
+		metadata.setCanal("Mobile");
+		metadata.setTags(Arrays.asList("importante", "vip"));
+		metadata.setNotas("Anotações importantes");
+		metadata.setDataDesativacao(LocalDateTime.now());
+
+		Cliente clienteCompleto = new Cliente();
+		clienteCompleto.setId("test-2");
+		clienteCompleto.setCpfCliente("22222222222");
+		clienteCompleto.setNomeCliente("Cliente Metadata");
+		clienteCompleto.setEmailCliente("metadata@teste.com");
+		clienteCompleto.setMetadata(metadata);
+
+		ClienteDocument doc = ClienteDocumentMapper.toDocument(clienteCompleto);
+
+		assertNotNull(doc);
+		assertNotNull(doc.getMetadata());
+		assertEquals("API", doc.getMetadata().getOrigem());
+		assertEquals(2, doc.getMetadata().getTags().size());
+		assertNotNull(doc.getMetadata().getDataDesativacao());
+	}
+
+	@Test
+	@DisplayName("Deve cobrir branches não executados dos métodos privados - conversão document para domain")
+	void deveCobrirBranchesConversaoDocumentParaDomain() {
+		// Testa toEnderecoDomain e toMetadataDomain com objetos completos
+		ClienteDocument.EnderecoDocument enderecoDoc = new ClienteDocument.EnderecoDocument();
+		enderecoDoc.setRua("Rua Document");
+		enderecoDoc.setNumero("888");
+		enderecoDoc.setComplemento("Bloco B");
+		enderecoDoc.setBairro("Vila Document");
+		enderecoDoc.setCidade("Cidade Doc");
+		enderecoDoc.setEstado("RS");
+		enderecoDoc.setCep("90000-000");
+
+		ClienteDocument.MetadataDocument metadataDoc = new ClienteDocument.MetadataDocument();
+		metadataDoc.setOrigem("Sistema");
+		metadataDoc.setCanal("Web");
+		metadataDoc.setTags(Arrays.asList("teste", "doc"));
+		metadataDoc.setNotas("Notas do documento");
+		metadataDoc.setDataDesativacao(LocalDateTime.now());
+
+		ClienteDocument doc = new ClienteDocument();
+		doc.setId("doc-1");
+		doc.setClienteId("cliente-doc-1");
+		doc.setCpfCliente("33333333333");
+		doc.setNomeCliente("Nome Document");
+		doc.setEmailCliente("doc@teste.com");
+		doc.setEndereco(enderecoDoc);
+		doc.setMetadata(metadataDoc);
+
+		Cliente cliente = ClienteDocumentMapper.toDomain(doc);
+
+		assertNotNull(cliente);
+		assertNotNull(cliente.getEndereco());
+		assertNotNull(cliente.getMetadata());
+		assertEquals("Rua Document", cliente.getEndereco().getRua());
+		assertEquals("90000-000", cliente.getEndereco().getCep()); // CEP vem formatado do document
+		assertEquals("Sistema", cliente.getMetadata().getOrigem());
+		assertEquals(2, cliente.getMetadata().getTags().size());
+	}
+
+	@Test
+	@DisplayName("Deve cobrir branch null do toEnderecoDocument usando reflection")
+	void deveCobrirBranchNullToEnderecoDocumentReflection() throws Exception {
+		// Usa reflection para chamar o método privado com null
+		Method method = ClienteDocumentMapper.class.getDeclaredMethod("toEnderecoDocument", Endereco.class);
+		method.setAccessible(true);
+
+		ClienteDocument.EnderecoDocument result = (ClienteDocument.EnderecoDocument) method.invoke(null,
+				(Endereco) null);
+
+		assertNull(result);
+	}
+
+	@Test
+	@DisplayName("Deve cobrir branch null do toEnderecoDomain usando reflection")
+	void deveCobrirBranchNullToEnderecoDomainReflection() throws Exception {
+		// Usa reflection para chamar o método privado com null
+		Method method = ClienteDocumentMapper.class.getDeclaredMethod("toEnderecoDomain",
+				ClienteDocument.EnderecoDocument.class);
+		method.setAccessible(true);
+
+		Endereco result = (Endereco) method.invoke(null, (ClienteDocument.EnderecoDocument) null);
+
+		assertNull(result);
+	}
+
+	@Test
+	@DisplayName("Deve cobrir branch null do toMetadataDocument usando reflection")
+	void deveCobrirBranchNullToMetadataDocumentReflection() throws Exception {
+		// Usa reflection para chamar o método privado com null
+		Method method = ClienteDocumentMapper.class.getDeclaredMethod("toMetadataDocument", Metadata.class);
+		method.setAccessible(true);
+
+		ClienteDocument.MetadataDocument result = (ClienteDocument.MetadataDocument) method.invoke(null,
+				(Metadata) null);
+
+		assertNull(result);
+	}
+
+	@Test
+	@DisplayName("Deve cobrir branch null do toMetadataDomain usando reflection")
+	void deveCobrirBranchNullToMetadataDomainReflection() throws Exception {
+		// Usa reflection para chamar o método privado com null
+		Method method = ClienteDocumentMapper.class.getDeclaredMethod("toMetadataDomain",
+				ClienteDocument.MetadataDocument.class);
+		method.setAccessible(true);
+
+		Metadata result = (Metadata) method.invoke(null, (ClienteDocument.MetadataDocument) null);
+
+		assertNull(result);
 	}
 }
