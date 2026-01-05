@@ -18,6 +18,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import org.mockito.Mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -774,6 +775,86 @@ class CriarClienteServiceTest {
 		// A validação deve falhar porque CPF é inválido
 		assertNotNull(exception);
 		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException com mensagem específica quando CPF contém apenas letras")
+	void deveLancarExcecaoComMensagemEspecificaQuandoCpfContemApenasLetras() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("ABCDEFGHIJK"); // 11 caracteres mas não numéricos
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// isValido() falha porque isCpfValido() retorna false
+		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByCpf(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException com mensagem específica quando email não possui arroba")
+	void deveLancarExcecaoComMensagemEspecificaQuandoEmailNaoPossuiArroba() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joaoexample.com"); // Email sem @
+		cliente.setCpfCliente("12345678901");
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// isValido() falha porque isEmailValido() retorna false
+		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByEmail(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException quando isCpfValido retorna false mas isValido retorna true")
+	void deveLancarExcecaoQuandoIsCpfValidoRetornaFalseMasIsValidoRetornaTrue() {
+		Cliente cliente = spy(new Cliente());
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("12345678901");
+
+		// Mockando para isValido retornar true mas isCpfValido retornar false
+		when(cliente.isValido()).thenReturn(true);
+		when(cliente.isCpfValido()).thenReturn(false);
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		assertEquals("Campo 'CPF' inválido: formato inválido (deve conter 11 dígitos)", exception.getMessage());
+		verify(clienteRepository, never()).existsByCpf(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException quando isEmailValido retorna false mas isValido retorna true")
+	void deveLancarExcecaoQuandoIsEmailValidoRetornaFalseMasIsValidoRetornaTrue() {
+		Cliente cliente = spy(new Cliente());
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("12345678901");
+
+		// Mockando para isValido e isCpfValido retornarem true mas isEmailValido
+		// retornar false
+		when(cliente.isValido()).thenReturn(true);
+		when(cliente.isCpfValido()).thenReturn(true);
+		when(cliente.isEmailValido()).thenReturn(false);
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		assertEquals("Campo 'E-mail' inválido: formato inválido", exception.getMessage());
+		verify(clienteRepository, never()).existsByEmail(anyString());
 		verify(clienteRepository, never()).save(any(Cliente.class));
 	}
 }
