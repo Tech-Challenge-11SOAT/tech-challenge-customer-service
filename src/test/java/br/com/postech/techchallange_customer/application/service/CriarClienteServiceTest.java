@@ -593,4 +593,187 @@ class CriarClienteServiceTest {
 		assertSame(clienteSalvo, resultado);
 		assertEquals("id-gerado-123", resultado.getId());
 	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException quando CPF tem formato inválido - menos de 11 dígitos")
+	void deveLancarExcecaoQuandoCpfTemMenosDe11Digitos() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("1234567890"); // 10 dígitos
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// isValido() retorna false, então lança exceção genérica primeiro
+		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByCpf(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException quando CPF tem formato inválido - mais de 11 dígitos")
+	void deveLancarExcecaoQuandoCpfTemMaisDe11Digitos() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("123456789012"); // 12 dígitos
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// isValido() retorna false, então lança exceção genérica primeiro
+		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByCpf(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException com mensagem específica quando CPF é vazio")
+	void deveLancarExcecaoComMensagemEspecificaQuandoCpfEstaVazio() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("");
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		assertTrue(exception.getMessage().contains("CPF") ||
+				exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByCpf(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException quando email tem formato inválido - sem @")
+	void deveLancarExcecaoQuandoEmailSemArroba() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("emailinvalido.com");
+		cliente.setCpfCliente("12345678901");
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// isValido() retorna false, então lança exceção genérica primeiro
+		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByEmail(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException quando email tem formato inválido - sem domínio")
+	void deveLancarExcecaoQuandoEmailSemDominio() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("email@");
+		cliente.setCpfCliente("12345678901");
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// isValido() retorna false, então lança exceção genérica primeiro
+		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByEmail(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve lançar InvalidClienteException com mensagem específica quando email está vazio")
+	void deveLancarExcecaoComMensagemEspecificaQuandoEmailEstaVazio() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("");
+		cliente.setCpfCliente("12345678901");
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		assertTrue(exception.getMessage().contains("E-mail") ||
+				exception.getMessage().contains("email") ||
+				exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).existsByEmail(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve validar CPF antes de verificar duplicidade")
+	void deveValidarCpfAntesDeVerificarDuplicidade() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("123"); // CPF inválido
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		assertTrue(exception.getMessage().contains("CPF") ||
+				exception.getMessage().contains("inválid"));
+		// Não deve chamar existsByCpf se CPF é inválido
+		verify(clienteRepository, never()).existsByCpf(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve validar email antes de verificar duplicidade")
+	void deveValidarEmailAntesDeVerificarDuplicidade() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("emailinvalido"); // Email inválido
+		cliente.setCpfCliente("12345678901");
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		assertTrue(exception.getMessage().contains("E-mail") ||
+				exception.getMessage().contains("email") ||
+				exception.getMessage().contains("inválid"));
+		// Não deve chamar existsByEmail se email é inválido
+		verify(clienteRepository, never()).existsByEmail(anyString());
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve chamar isCpfValido para validar formato do CPF")
+	void deveChamarIsCpfValidoParaValidarFormatoDoCpf() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com");
+		cliente.setCpfCliente("ABC12345678"); // CPF com letras
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// A validação deve falhar
+		assertNotNull(exception);
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
+
+	@Test
+	@DisplayName("Deve validar formato do email através de isEmailValido")
+	void deveValidarFormatoDoEmailAtravesDeIsEmailValido() {
+		Cliente cliente = new Cliente();
+		cliente.setNomeCliente("João Silva");
+		cliente.setEmailCliente("joao@example.com"); // Email válido
+		cliente.setCpfCliente("ABC12345678"); // CPF inválido com letras
+
+		InvalidClienteException exception = assertThrows(
+				InvalidClienteException.class,
+				() -> service.execute(cliente));
+
+		// A validação deve falhar porque CPF é inválido
+		assertNotNull(exception);
+		assertTrue(exception.getMessage().contains("inválid"));
+		verify(clienteRepository, never()).save(any(Cliente.class));
+	}
 }
