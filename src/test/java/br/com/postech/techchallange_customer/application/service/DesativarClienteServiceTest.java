@@ -37,6 +37,7 @@ class DesativarClienteServiceTest {
 	private DesativarClienteService service;
 
 	@BeforeEach
+	@SuppressWarnings("unused")
 	void setUp() {
 		service = new DesativarClienteService(clienteRepository);
 	}
