@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: tech-challenge-customer-service # ALTERAR
+  name: tech-challenge-customer-service 
   namespace: techchallenge
 spec:
   replicas: 2
   selector:
     matchLabels:
-      app: customer-service # ALTERAR
+      app: customer-service 
   strategy:
     type: RollingUpdate
     rollingUpdate:
@@ -16,19 +16,19 @@ spec:
   template:
     metadata:
       labels:
-        app: customer-service # ALTERAR
+        app: customer-service 
     spec:
       containers:
-        - name: customer-service # ALTERAR
-          image: nicolasmartinss/customer-service:${{ github.sha }} # ALTERAR
+        - name: customer-service 
+          image: nicolasmartinss/customer-service:${{ github.sha }} 
           imagePullPolicy: Always
           ports:
             - containerPort: 8080
           envFrom:
             - configMapRef:
-                name: customer-service-config # ALTERAR
+                name: customer-service-config 
             - secretRef:
-                name: customer-service-secret # ALTERAR
+                name: customer-service-secret 
           resources:
             requests:
               cpu: 500m

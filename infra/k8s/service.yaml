@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: tech-challenge-customer-service # ALTERAR
+  name: tech-challenge-customer-service
   namespace: techchallenge
   labels:
-    app: tech-challenge-customer-service # ALTERAR
+    app: tech-challenge-customer-service
 spec:
   selector:
-    app: tech-challenge-customer-service # ALTERAR
+    app: tech-challenge-customer-service
   ports:
     - name: http
       port: 8080
