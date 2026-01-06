@@ -245,8 +245,6 @@ class DesativarClienteServiceTest {
 		cliente.setClienteId(clienteId);
 		cliente.setAtivo(true);
 
-		LocalDateTime timestampAnterior = cliente.getDataUltimaAtualizacao();
-
 		when(clienteRepository.findByClienteId(clienteId)).thenReturn(Optional.of(cliente));
 		when(clienteRepository.update(any(Cliente.class))).thenReturn(cliente);
 
@@ -385,9 +383,10 @@ class DesativarClienteServiceTest {
 		String clienteId = "cliente-com-erro";
 
 		when(clienteRepository.findByClienteId(clienteId))
-				.thenThrow(new RuntimeException("Erro no banco de dados"));
+				.thenThrow(new RuntimeException("Erro ao atualizar no banco de dados"));
 
-		assertThrows(RuntimeException.class, () -> service.execute(clienteId));
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.execute(clienteId));
+		assertEquals("Erro ao atualizar no banco de dados", exception.getMessage());
 
 		verify(clienteRepository).findByClienteId(clienteId);
 		verify(clienteRepository, never()).update(any(Cliente.class));
@@ -406,7 +405,8 @@ class DesativarClienteServiceTest {
 		when(clienteRepository.update(any(Cliente.class)))
 				.thenThrow(new RuntimeException("Erro ao atualizar"));
 
-		assertThrows(RuntimeException.class, () -> service.execute(clienteId));
+		RuntimeException exception = assertThrows(RuntimeException.class, () -> service.execute(clienteId));
+		assertEquals("Erro ao atualizar", exception.getMessage());
 
 		verify(clienteRepository).findByClienteId(clienteId);
 		verify(clienteRepository).update(any(Cliente.class));
@@ -419,7 +419,9 @@ class DesativarClienteServiceTest {
 
 		when(clienteRepository.findByClienteId(clienteId)).thenReturn(Optional.empty());
 
-		assertThrows(ClienteNotFoundException.class, () -> service.execute(clienteId));
+		ClienteNotFoundException exception = assertThrows(ClienteNotFoundException.class,
+				() -> service.execute(clienteId));
+		assertNotNull(exception);
 
 		verify(clienteRepository).findByClienteId(clienteId);
 	}
