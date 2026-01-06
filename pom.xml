@@ -18,7 +18,46 @@
 		<license/>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<id>rm361083</id>
+			<name>Pedro Martins Argentati Procopio</name>
+			<email>rm361083@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm363050</id>
+			<name>Endrew da Silva Pereira</name>
+			<email>rm363050@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm364602</id>
+			<name>João Pedro Mesquita</name>
+			<email>rm364602@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm362039</id>
+			<name>Nicolas Inacio Martins</name>
+			<email>rm362039@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm361341</id>
+			<name>Thiago Martins Prado</name>
+			<email>rm361341@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<scm>
 		<connection/>
