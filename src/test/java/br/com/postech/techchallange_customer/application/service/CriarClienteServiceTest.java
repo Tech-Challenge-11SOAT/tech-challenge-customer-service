@@ -40,6 +40,7 @@ class CriarClienteServiceTest {
 	private CriarClienteService service;
 
 	@BeforeEach
+	@SuppressWarnings("unused")
 	void setUp() {
 		service = new CriarClienteService(clienteRepository);
 	}
@@ -438,8 +439,10 @@ class CriarClienteServiceTest {
 
 		when(clienteRepository.existsByCpf("12345678901")).thenReturn(true);
 
-		assertThrows(ClienteAlreadyExistsException.class, () -> service.execute(cliente));
+		ClienteAlreadyExistsException exception = assertThrows(ClienteAlreadyExistsException.class,
+				() -> service.execute(cliente));
 
+		assertNotNull(exception);
 		verify(clienteRepository).existsByCpf("12345678901");
 		verify(clienteRepository, never()).existsByEmail(anyString());
 	}
@@ -556,7 +559,9 @@ class CriarClienteServiceTest {
 		cliente.setEmailCliente("invalido");
 		cliente.setCpfCliente("123");
 
-		assertThrows(InvalidClienteException.class, () -> service.execute(cliente));
+		InvalidClienteException exception = assertThrows(InvalidClienteException.class,
+				() -> service.execute(cliente));
+		assertNotNull(exception);
 
 		verify(clienteRepository, never()).existsByCpf(anyString());
 		verify(clienteRepository, never()).existsByEmail(anyString());
