@@ -5,12 +5,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.6</version>
+		<version>3.5.9</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>br.com.postech</groupId>
 	<artifactId>techchallange-customer</artifactId>
-	<version>0.0.1</version>
+	<version>0.0.2</version>
 	<name>techchallange-customer</name>
 	<description>Microservice Customer</description>
 	<url/>
@@ -18,7 +18,46 @@
 		<license/>
 	</licenses>
 	<developers>
-		<developer/>
+		<developer>
+			<id>rm361083</id>
+			<name>Pedro Martins Argentati Procopio</name>
+			<email>rm361083@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm363050</id>
+			<name>Endrew da Silva Pereira</name>
+			<email>rm363050@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm359999</id>
+			<name>Everton Coutinho</name>
+			<email>rm359999@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm362039</id>
+			<name>Nicolas Inacio Martins</name>
+			<email>rm362039@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
+		<developer>
+			<id>rm361341</id>
+			<name>Thiago Martins Prado</name>
+			<email>rm361341@fiap.com.br</email>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</developer>
 	</developers>
 	<scm>
 		<connection/>
@@ -89,6 +128,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+        <!-- Actuator -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
 
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
