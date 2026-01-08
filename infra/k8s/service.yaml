@@ -4,10 +4,10 @@ metadata:
   name: tech-challenge-customer-service
   namespace: techchallenge
   labels:
-    app: tech-challenge-customer-service
+    app: customer-service
 spec:
   selector:
-    app: tech-challenge-customer-service
+    app: customer-service
   ports:
     - name: http
       port: 8080
