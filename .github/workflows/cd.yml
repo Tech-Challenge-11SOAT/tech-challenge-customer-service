@@ -57,8 +57,8 @@ jobs:
         run: |
           kubectl create secret generic customer-service-secret \
             --namespace techchallenge \
-            --from-literal=SPRING_DATA_MONGODB_URI=${{ secrets.SPRING_DATA_MONGODB_URI }} \
-            --from-literal=JWT_SECRET=${{ secrets.JWT_SECRET }} \
+            --from-literal=SPRING_DATA_MONGODB_URI="${{ secrets.SPRING_DATA_MONGODB_URI }}" \
+            --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
             --dry-run=client -o yaml | kubectl apply -f -
 
       - name: Atualizar Deployment com nova imagem
